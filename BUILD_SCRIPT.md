@@ -6,15 +6,13 @@ Single-page habit tracker with local storage persistence.
 Tech Stack
 HTML, CSS, JavaScript (vanilla, no frameworks)
 LocalStorage for data persistence
+Structure
+
+
 Data Model
 Each day is stored in localStorage under key lifeos-YYYY-MM-DD:
-date: "2026-02-28"
-noScreensAfter10: false
-sleepBy1030: false
-gym: false
-practiceLangGraph: false
-javaReadingWritingNoAI: false
-purchasesOfDay: ""
+
+
 Features
 5 daily habit checkboxes with completion tracking
 Purchases text area per day
