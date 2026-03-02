@@ -98,13 +98,6 @@ function updateQuickStats() {
 }
 
 // Date navigation
-document.getElementById('purchases').addEventListener('input', (e) => {
-  const key = dateKey(currentDate);
-  const data = loadDay(key);
-  data.purchasesOfDay = e.target.value;
-  saveDay(key, data);
-});
-
 document.getElementById('prev-day').addEventListener('click', () => {
   currentDate.setDate(currentDate.getDate() - 1);
   renderHabits();

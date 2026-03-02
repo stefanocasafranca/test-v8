@@ -16,7 +16,6 @@ function createDayRecord(key) {
     gym: false,
     practiceLangGraph: false,
     javaReadingWritingNoAI: false,
-    purchasesOfDay: '',
   };
 }
 
@@ -58,8 +57,6 @@ function renderHabits() {
       <span class="habit-label">${h.label}</span>
     </label>
   `).join('');
-
-  document.getElementById('purchases').value = data.purchasesOfDay || '';
 
   habitsEl.querySelectorAll('input').forEach(cb => {
     cb.addEventListener('change', () => {
