@@ -1,0 +1,8 @@
+node_modules/
+server/.env
+server/.tokens.json
+.DS_Store
+.build_script_audit.log
+.build_script_config.json
+.build_script_prev_paragraph.txt
+.build_script_queue.json
