@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life OS Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .layout {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .left-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .right-col {
+      width: 320px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 40px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .date-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .date-nav button {
+      background: none;
+      border: 1px solid #333;
+      color: #999;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .date-nav button:hover {
+      border-color: #555;
+      color: #fff;
+    }
+
+    .date-label {
+      font-size: 0.9rem;
+      color: #888;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    .date-picker {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #ccc;
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      outline: none;
+      color-scheme: dark;
+    }
+
+    .date-picker::-webkit-calendar-picker-indicator {
+      filter: invert(0.6);
+      cursor: pointer;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .habits {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 32px;
+    }
+
+    .habit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+    }
+
+    .habit:hover {
+      background: #1a1a1a;
+    }
+
+    .habit input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkmark {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #333;
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .checkmark svg {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .habit input:checked + .checkmark {
+      background: #22c55e;
+      border-color: #22c55e;
+    }
+
+    .habit input:checked + .checkmark svg {
+      opacity: 1;
+    }
+
+    .habit-label {
+      font-size: 0.95rem;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+
+    .habit input:checked ~ .habit-label {
+      color: #666;
+      text-decoration: line-through;
+    }
+
+    .purchases textarea {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #252525;
+      border-radius: 8px;
+      color: #ccc;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .purchases textarea::placeholder {
+      color: #444;
+    }
+
+    .purchases textarea:focus {
+      border-color: #333;
+    }
+
+    .streak {
+      margin-top: 32px;
+      padding: 16px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .streak-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #22c55e;
+    }
+
+    .streak-text {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    .weekly-summary {
+      padding: 16px;
+      background: #1a1a1a;
+      border-radius: 8px;
+    }
+
+    .weekly-summary .section-title {
+      margin-bottom: 16px;
+    }
+
+    .weekly-week-label {
+      font-size: 0.8rem;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .weekly-habit {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #1f1f1f;
+    }
+
+    .weekly-habit:last-child {
+      border-bottom: none;
+    }
+
+    .weekly-habit-name {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .weekly-habit-count {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ccc;
+    }
+
+    .weekly-overall {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #2a2a2a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .weekly-overall-label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .weekly-overall-pct {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #22c55e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Life OS Tracker</h1>
+
+    <div class="layout">
+      <div class="left-col">
+        <div class="date-nav">
+          <button id="prev-day">&larr;</button>
+          <span class="date-label" id="date-label"></span>
+          <input type="date" id="date-picker" class="date-picker">
+          <button id="next-day">&rarr;</button>
+        </div>
+
+        <div class="section-title">Daily Habits</div>
+        <div class="habits" id="habits"></div>
+
+        <div class="purchases">
+          <div class="section-title">Purchases</div>
+          <textarea id="purchases" placeholder="What did you buy today?"></textarea>
+        </div>
+
+        <div class="streak">
+          <div class="streak-number" id="streak-count">0</div>
+          <div class="streak-text">day streak (all habits)</div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="weekly-summary">
+          <div class="section-title">Weekly Summary</div>
+          <div class="weekly-week-label" id="weekly-range"></div>
+          <div id="weekly-habits"></div>
+          <div class="weekly-overall">
+            <span class="weekly-overall-label">Overall completion</span>
+            <span class="weekly-overall-pct" id="weekly-pct">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data model: each day is keyed by date (YYYY-MM-DD) and stored as:
+    // {
+    //   date: string,
+    //   noScreensAfter10: boolean,
+    //   sleepBy1030: boolean,
+    //   gym: boolean,
+    //   practiceLangGraph: boolean,
+    //   javaReadingWritingNoAI: boolean,
+    //   purchasesOfDay: string
+    // }
+
+    const HABITS = [
+      { field: 'noScreensAfter10', label: 'No screens after 10 PM' },
+      { field: 'sleepBy1030', label: 'Sleep by 10:30 PM' },
+      { field: 'gym', label: 'Gym / Physical activity' },
+      { field: 'practiceLangGraph', label: 'Practice LangGraph' },
+      { field: 'javaReadingWritingNoAI', label: 'Java Reading & Writing (no AI)' },
+    ];
+
+    let currentDate = new Date();
+
+    function dateKey(d) {
+      return d.toISOString().split('T')[0];
+    }
+
+    function formatDate(d) {
+      const today = new Date();
+      const key = dateKey(d);
+      const todayKey = dateKey(today);
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      if (key === todayKey) return 'Today';
+      if (key === dateKey(yesterday)) return 'Yesterday';
+
+      return d.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+
+    function createDayRecord(key) {
+      return {
+        date: key,
+        noScreensAfter10: false,
+        sleepBy1030: false,
+        gym: false,
+        practiceLangGraph: false,
+        javaReadingWritingNoAI: false,
+        purchasesOfDay: '',
+      };
+    }
+
+    function loadDay(key) {
+      const raw = localStorage.getItem('lifeos-' + key);
+      if (raw) return JSON.parse(raw);
+      const record = createDayRecord(key);
+      saveDay(key, record);
+      return record;
+    }
+
+    function saveDay(key, data) {
+      localStorage.setItem('lifeos-' + key, JSON.stringify(data));
+    }
+
+    function ensureToday() {
+      const key = dateKey(new Date());
+      if (!localStorage.getItem('lifeos-' + key)) {
+        saveDay(key, createDayRecord(key));
+      }
+    }
+
+    function render() {
+      const key = dateKey(currentDate);
+      const data = loadDay(key);
+
+      document.getElementById('date-label').textContent = formatDate(currentDate);
+      document.getElementById('date-picker').value = key;
+
+      const habitsEl = document.getElementById('habits');
+      habitsEl.innerHTML = HABITS.map(h => `
+        <label class="habit">
+          <input type="checkbox" data-field="${h.field}" ${data[h.field] ? 'checked' : ''}>
+          <span class="checkmark">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6L5 9L10 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="habit-label">${h.label}</span>
+        </label>
+      `).join('');
+
+      document.getElementById('purchases').value = data.purchasesOfDay || '';
+
+      habitsEl.querySelectorAll('input').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const d = loadDay(key);
+          d[cb.dataset.field] = cb.checked;
+          saveDay(key, d);
+          updateStreak();
+          updateWeeklySummary();
+        });
+      });
+
+      updateStreak();
+      updateWeeklySummary();
+    }
+
+    function getWeekDays() {
+      const today = new Date();
+      const day = today.getDay();
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - ((day + 6) % 7));
+
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(dateKey(d));
+      }
+      return days;
+    }
+
+    function updateWeeklySummary() {
+      const weekDays = getWeekDays();
+
+      const weekRecords = weekDays.map(key => {
+        const raw = localStorage.getItem('lifeos-' + key);
+        return raw ? JSON.parse(raw) : null;
+      });
+
+      const rangeStart = new Date(weekDays[0] + 'T00:00:00');
+      const rangeEnd = new Date(weekDays[6] + 'T00:00:00');
+      const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      document.getElementById('weekly-range').textContent = fmt(rangeStart) + ' – ' + fmt(rangeEnd);
+
+      let totalChecked = 0;
+      let totalPossible = HABITS.length * 7;
+
+      const habitsHtml = HABITS.map(h => {
+        let count = 0;
+        weekRecords.forEach(r => { if (r && r[h.field]) count++; });
+        totalChecked += count;
+        return `<div class="weekly-habit">
+          <span class="weekly-habit-name">${h.label}</span>
+          <span class="weekly-habit-count">${count} / 7</span>
+        </div>`;
+      }).join('');
+
+      document.getElementById('weekly-habits').innerHTML = habitsHtml;
+
+      const pct = totalPossible > 0 ? Math.round((totalChecked / totalPossible) * 100) : 0;
+      document.getElementById('weekly-pct').textContent = pct + '%';
+    }
+
+    function updateStreak() {
+      let streak = 0;
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+
+      while (true) {
+        const raw = localStorage.getItem('lifeos-' + dateKey(d));
+        if (!raw) break;
+        const data = JSON.parse(raw);
+        const allDone = HABITS.every(h => data[h.field]);
+        if (!allDone) break;
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
+
+      const todayData = loadDay(dateKey(new Date()));
+      if (HABITS.every(h => todayData[h.field])) {
+        streak++;
+      }
+
+      document.getElementById('streak-count').textContent = streak;
+    }
+
+    document.getElementById('purchases').addEventListener('input', (e) => {
+      const key = dateKey(currentDate);
+      const data = loadDay(key);
+      data.purchasesOfDay = e.target.value;
+      saveDay(key, data);
+    });
+
+    document.getElementById('prev-day').addEventListener('click', () => {
+      currentDate.setDate(currentDate.getDate() - 1);
+      render();
+    });
+
+    document.getElementById('next-day').addEventListener('click', () => {
+      currentDate.setDate(currentDate.getDate() + 1);
+      render();
+    });
+
+    document.getElementById('date-picker').addEventListener('change', (e) => {
+      if (e.target.value) {
+        const [y, m, d] = e.target.value.split('-').map(Number);
+        currentDate = new Date(y, m - 1, d);
+        render();
+      }
+    });
+
+    document.getElementById('date-label').addEventListener('click', () => {
+      currentDate = new Date();
+      render();
+    });
+
+    ensureToday();
+    render();
+  </script>
+</body>
+</html>
