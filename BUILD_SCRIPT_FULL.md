@@ -64,3 +64,4 @@ Each day is stored in localStorage under key `lifeos-YYYY-MM-DD`:
 2. Create a daily data model keyed by date. Each day should store: date, noScreensAfter10, sleepBy1030, gym, practiceLangGraph, javaReadingWritingNoAI, and purchasesOfDay. If today's record does not exist, create it automatically.
 3. Add a simple date selector so I can switch to a previous date, view that day's record, and update its habits or purchases. Keep local storage working correctly for both current and past days.
 4. Add a Weekly Summary section showing: days completed for each habit this week, Java Reading and Writing (no AI) completion count, and a simple overall completion percentage for the current week only.
+5. Put all in one page, my weekly summary to the right.
